@@ -40,6 +40,15 @@ describe Artist do
     it 'creates an artist by name' do
       expect(Artist.create_by_name('Find Me').name).to eq('Find Me')
     end
+
+    it 'finds an artist by name' do
+      artist.name = "Find Me"
+      expect(Artist.find_by_name('Find Me')).to eq(artist)
+    end
+
+    it 'creates an artist by name' do
+      expect(Artist.create_by_name('Find Me').name).to eq('Find Me')
+    end
   end
 
   describe "with songs" do
