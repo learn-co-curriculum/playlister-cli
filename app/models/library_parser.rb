@@ -1,7 +1,9 @@
 class LibraryParser
 
  def call
-  # code here1
+  files.each do |file|
+    build_song(file)
+  end
  end
 
   def files
@@ -27,7 +29,17 @@ class LibraryParser
   end
 
   def build_song(filename)
-    # code here!
+
+    file_array = parse_filename(filename)
+  
+    song = Song.create_by_name(file_array[1])
+    artist = Artist.create_by_name(file_array[0])
+    genre = Genre.create_by_name(file_array[2])
+    
+    artist.add_song(song)
+    song.genre = genre
+    
+    song
   end
 
 
