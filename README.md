@@ -10,6 +10,8 @@
 
 In previous labs, you've built a Playlister domain model that creates artist, song and genre classes that are associated to each other via has many, belongs to and through associations. In another lab, you built an object oriented command line jukebox. This exercise will bring together some of those concepts. You'll be building out the Playlister domain model again. Then, we'll write a `LibraryParser` class that takes a list of music file names, grabs the artist, song name and genre out of each file name and uses that data to build song, artist and genre instances and associate them to one another. 
 
+If you haven't completed the above-mentioned labs, you can check out their solutions [here](https://github.com/learn-co-curriculum/playlister-rb/tree/solution) and [here](https://github.com/learn-co-curriculum/jukebox-cli)
+
 ### Using External Data to Create Class Instances
 
 We already know that our job as programmers is to deliver data. That will the core concept behind many of the apps you build, especially apps for the web. So, where will that data come from? In some cases, it will come from users interacting with out app. The number of instances of the `User` class, for example, might grow every time someone signs up for our app. 
