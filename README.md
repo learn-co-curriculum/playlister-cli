@@ -18,13 +18,13 @@ We already know that our job as programmers is to deliver data. That will the co
 
 Let's say, though, that we are building an app that connects users to food pantries in their area. Where do we get the data on the food pantry locations from? There are dozens of food pantries in New York City. If you expand the geographic area, dozens would turn into hundreds of locations. We're lazy (remember, that's a virtue in a programmer!) and we certainly don't want to sit at our computer and instantiate hundreds of `FoodPantry` objects by hand. We would want a way to do that *programmatically*. We would want to write a class or a method that can iterate over a list of food pantries and their associated data (location, name, etc) and turn that data into instances of a `FoodPantry` class. 
 
-Let's take a look at another example. Let's say we have an app that allows users to browse lists of recipes, saving recipes to their favorites and inviting their friends to collaborate on meals. We do get get the recipes from? Once again, would we sit at our computers and manually instantiate hundres or even thousans of instances of a `Recipe` class? We are way to lazy for that. We would instead write a program that extracted recipes from an external source, such as an API, and used that data to instantiate our own `Recipe` instances. 
+Let's take a look at another example. Let's say we have an app that allows users to browse lists of recipes, saving recipes to their favorites and inviting their friends to collaborate on meals. We do get get the recipes from? Once again, would we sit at our computers and manually instantiate hundres or even thousans of instances of a `Recipe` class? We are way too lazy for that. We would instead write a program that extracted recipes from an external source, such as an API, and used that data to instantiate our own `Recipe` instances. 
 
 This kind of data retrieval and instantiation is what we've been practicing in many of the labs we've completed so far. Here, we'll be using a list of mp3 files in a `db` ("database") directory to instantiate `Song`, `Artist` and `Genre` instances in our Playlister domain model. 
 
 ## Instructions
 
-This lab is partly test-driven. Your'e expected to get the `Song`, `Arist` and `Genre` classes set up using the tests to guide you. The `LibraryParser` class we'll set up together. Read through the guidelines below before proceeding with this lab.
+This lab is partly test-driven. You're expected to get the `Song`, `Arist` and `Genre` classes set up using the tests to guide you. The `LibraryParser` class we'll set up together. Read through the guidelines below before proceeding with this lab.
 
 ### Project Set Up
 
@@ -47,7 +47,7 @@ The folder structure for this project is similar to the set up that we've been l
 ├── db
 │   └── data
 │       ├── ASAP Rocky - Peso [dance].mp3
-│       ├── Action Bronson - Larry Csonka [indie].mp3
+│       ├── Action Bronson - Larry Csonka - indie.mp3
 │       └── etc.
 └── spec
     ├── artist_spec.rb
@@ -93,8 +93,6 @@ Some new additions of functionality are class methods `find_by_name`, `create_by
 
 The `LibraryParser` should be responible for finding the MP3 files, parsing their titles, and building Song, Artist, and Genre objects from that data. 
 
-<!-- An instance of `LibraryParser` should accept a relative path from the top of the directory that points to a directory with MP3s to parse. For example, `LibraryParser.new('db/data')` would point to the `data` directory provided within `db`.
- -->
 The `library_parser_spec` defines a pretty specific vision for the library parser. It breaks it down to some small methods.
 
 #### `.files`
@@ -112,85 +110,47 @@ The [`Dir` class](http://ruby-doc.org/core-2.2.0/Dir.html) is a Ruby class that 
 
 This method is also given to you. However, it's implementation is important to understand, so please read the explanation below. 
 
-This method operates on *a single file name*. It takes that file name in as an argument and uses a regular expression to extract from that file name the author, song and genre. Then, it returns an array that looks like this: 
+This method operates on *a single file name*. It takes that file name in as an argument  extracts from that file name the author, song and genre. Then, it returns an array that looks like this: 
 
 ```ruby
 [artist_name, song_name, genre_name]
 ```
 
-**Regular Expressions in Ruby:** 
-
-A [regular expression](http://ruby-doc.org/core-2.2.0/Regexp.html) is used to match a pattern against a string. 
-
-In this case, we need to operate on an individual file name that looks something like this: 
+Inside this method we are operating on an individual file name, which looks something like this: 
 
 ```ruby
-"db/data/Action Bronson - Larry Csonka [indie].mp3"
+"db/data/Action Bronson - Larry Csonka - indie.mp3"
 ```
 
-and use a regex to grab the artist, song and genre out of the string. 
-
-* First, slice off the `db/data/` from the song using the `.slice!` method. 
+We need to extract just the artist name, song name and genre name. So, we need to get rid of the `"db/data"` and `.mp3` bits that start and end the string. Let's chop off the first part using the `.slice` method:
 
 ```ruby
-filename = "db/data/Action Bronson - Larry Csonka [indie].mp3"
 filename.slice!(0..7)
-filename 
-  => "Action Bronson - Larry Csonka [indie].mp3"
 ```
-* Now, let's grab the artist's name. The artist will always be the set of characters between the beginning of the newly sliced filename and the `" -"`. We can use the following regex: 
+
+Great. Now our file name looks something like this:
 
 ```ruby
-filename.match(/^(.*) -/)
+"Action Bronson - Larry Csonka - indie.mp3"
 ```
 
-The `.match` method is called on a string and takes in a regular expression. It finds the characters that match the regular expression and returns a `MatchData` object. Let's break down the regex above: 
+Let's get rid of the file extension now:
 
-* The forward slashes, `/` start and end the expression.
-* The `^` means "start at the beginning of the string"
-* The `.*` means all characters of any type up through the...
-* ` -` finishes the above statement so that the whole thing reads: "Start at the beginning of the string and grab all of the characters up through the ` -`"
-* The parantheses around the `.*` indicate that we also want to grab just the characters between the start of the string and the whitespace the preceeds the `-`. The resultant object looks like this: 
+```
+filename.slice!(-4..-1)
+```
+
+Now, if we split the string on the `' - '`, we'll get the array we want:
 
 ```ruby
-#<MatchData "Action Bronson -" 1:"Action Bronson">
+filename.split(" - ")
 ```
-
-Because we used the parentheses, `(.*)`, to grab the text we wanted out of the match result, we have this `1:"Action Bronson"` attribute in our MatchData object. To grab *just the artist name*, we can do this: 
+The return value of the above line of code would look this this:
 
 ```ruby
-artist = filename.match(/^(.*) -/)[1]
-  => "Action Bronson"
+["Action Bronson", "Larry Csonka", "indie"]
 ```
-
-* Great, now that we've grabbed the artist's name from the file name, let's get the song's name. This time we need a regex to grab everything in between the `"- "` and the first bracket, `[`, that encloses the genre name. 
-
-```ruby
-song   = filename.match(/- (.*) \[/)[1]
-```
-Once again we are using parentheses to grab the exact expression we want. 
-
-* Let's get the genre name too: 
-
-```ruby
-genre  = filename.match(/\[([^\]]*)\]/)[1]
-```
-
-We're almost done with this method! The return value should be an array that looks like this: 
-
-`[artist, song, genre]`
-
-**Note:** It's okay if you don't understand everything that was just discussed about regular expressions! Regex is hard to get the hang of and we'll be taking a closer look in a more advanced unit. The take-aways are: 
-
-* Regex can be used to identify a segment of a string that matches a particular pattern. 
-* The regex code that we need to grab the artist, song and genre names from a single `filename` is as follows: 
-
-
-```ruby
-artist = filename.match(/^(.*) -/)[1]
-song = filename.match(/- (.*) \[/)[1]
-genre = filename.match(/\[([^\]]*)\]/)[1]
-```
+We are therefore successfully returning the array of artist, song, genre
 
 #### `build_song`
 
