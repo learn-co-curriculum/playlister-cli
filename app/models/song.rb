@@ -7,7 +7,7 @@ class Song
   @@all = []
 
   def initialize
-    self.class.all << self
+    Song.all << self
   end
 
   def self.reset_all

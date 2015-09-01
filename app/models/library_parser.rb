@@ -1,13 +1,9 @@
 class LibraryParser
 
  def call
-<<<<<<< HEAD
   files.each do |file|
     build_song(file)
   end
-=======
-  # code here
->>>>>>> a1697bd8d427eca88fbf46f9a1610fa700841667
  end
 
   def files

@@ -4,7 +4,7 @@ class Genre
   @@all = []
 
   def initialize
-    self.class.all << self
+    Genre.all << self
     @songs = []
   end
 
