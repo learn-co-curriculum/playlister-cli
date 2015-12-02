@@ -168,3 +168,5 @@ This class is the primary interface for the command line application. Upon initi
 
 Add features to the `PlaylisterCLI` class! Have fun with this, add functionality to perhaps browse by Genre or Artist.
 
+
+<a href='https://learn.co/lessons/playlister-cli' data-visibility='hidden'>View this lesson on Learn.co</a>
